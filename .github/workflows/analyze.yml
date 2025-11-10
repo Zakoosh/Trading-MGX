@@ -1,0 +1,98 @@
+name: Automated Stock Analysis
+
+on:
+  schedule:
+    # Run every 4 hours during market hours (9 AM - 5 PM EST)
+    - cron: '0 9,13,17,21 * * 1-5'
+    # Daily report at 9 AM EST
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd /tmp
+          npm init -y
+          npm install node-fetch
+
+      - name: Run Analysis
+        env:
+          VERCEL_URL: ${{ secrets.VERCEL_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node << 'EOF'
+          const fetch = require('node-fetch');
+
+          const WATCHLIST = [
+            'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
+            'META', 'NVDA', 'AMD', 'NFLX', 'DIS'
+          ];
+
+          async function analyze() {
+            try {
+              console.log('🔍 Starting automated analysis...');
+              console.log('📊 Analyzing symbols:', WATCHLIST.join(', '));
+
+              // Call analysis API
+              const analysisResponse = await fetch(`${process.env.VERCEL_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symbols: WATCHLIST })
+              });
+
+              if (!analysisResponse.ok) {
+                throw new Error(`Analysis failed: ${analysisResponse.statusText}`);
+              }
+
+              const analysisData = await analysisResponse.json();
+              console.log('✅ Analysis completed');
+              console.log(`📈 Found ${analysisData.analysis.signals.length} signals`);
+
+              // Determine notification type
+              const hour = new Date().getUTCHours();
+              const isDailyReport = hour === 9; // 9 AM EST
+
+              // Send to Telegram
+              const telegramResponse = await fetch(`${process.env.VERCEL_URL}/api/telegram`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  type: isDailyReport ? 'daily_report' : 'signal_alert',
+                  signals: analysisData.analysis.signals
+                })
+              });
+
+              if (!telegramResponse.ok) {
+                throw new Error(`Telegram notification failed: ${telegramResponse.statusText}`);
+              }
+
+              console.log('📱 Telegram notification sent successfully');
+              console.log('✨ Automated analysis completed!');
+
+            } catch (error) {
+              console.error('❌ Error:', error.message);
+              process.exit(1);
+            }
+          }
+
+          analyze();
+          EOF
+
+      - name: Summary
+        run: |
+          echo "✅ Automated analysis completed"
+          echo "📊 Check Telegram for results"

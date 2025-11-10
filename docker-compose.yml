@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  investing2:
+    build: .
+    container_name: investing2-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - investing2-network
+
+networks:
+  investing2-network:
+    driver: bridge

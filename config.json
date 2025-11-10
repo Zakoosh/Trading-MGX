@@ -1,0 +1,64 @@
+{
+  "analysis": {
+    "schedule": "every 4 hours",
+    "marketHours": {
+      "start": "09:00",
+      "end": "17:00",
+      "timezone": "America/New_York"
+    },
+    "watchlist": [
+      "AAPL",
+      "MSFT",
+      "GOOGL",
+      "AMZN",
+      "TSLA",
+      "META",
+      "NVDA",
+      "AMD",
+      "NFLX",
+      "DIS",
+      "JPM",
+      "BAC",
+      "V",
+      "MA",
+      "WMT"
+    ]
+  },
+  "telegram": {
+    "dailyReport": {
+      "enabled": true,
+      "time": "09:00",
+      "timezone": "America/New_York"
+    },
+    "instantAlerts": {
+      "enabled": true,
+      "minConfidence": 80
+    },
+    "tradeNotifications": {
+      "enabled": true,
+      "notifyOnOpen": true,
+      "notifyOnClose": true
+    }
+  },
+  "trading": {
+    "simulator": {
+      "initialCapital": 100000,
+      "maxPositionSize": 10000,
+      "maxDailyLoss": 5000
+    },
+    "real": {
+      "enabled": false,
+      "broker": "alpaca",
+      "paperTrading": true,
+      "maxPositionSize": 1000,
+      "maxDailyLoss": 500,
+      "minConfidenceThreshold": 75
+    }
+  },
+  "riskManagement": {
+    "maxOpenPositions": 10,
+    "maxPortfolioRisk": 0.02,
+    "stopLossPercent": 0.05,
+    "takeProfitPercent": 0.15
+  }
+}
