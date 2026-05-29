@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title or "Trading Bot" }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>لوحة تحكم البوت</h1>
+    <nav>
+      <a href="/">صحة</a> | <a href="/dashboard">الصفقات</a> | <a href="/ping-telegram">اختبار تيليجرام</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer><small>ورقي تجريبي</small></footer>
+</body>
+</html>
