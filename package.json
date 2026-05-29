@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint --quiet ./src",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "ci": "pnpm lint && pnpm typecheck && pnpm build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
