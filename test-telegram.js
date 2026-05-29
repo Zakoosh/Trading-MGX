@@ -1,7 +1,7 @@
 const https = require('https');
 
-const botToken = '8382222457:AAGN8IEwtE_l_FPfhAJ4S7yq2NH2lkvV_qw';
-const chatId = '6980352639';
+const botToken = process.env.TELEGRAM_BOT_TOKEN || 'your_telegram_bot_token_here';
+const chatId = process.env.TELEGRAM_CHAT_ID || 'your_telegram_chat_id';
 
 const message = `🎉 *رسالة تجريبية من نظام Investing2*
 
