@@ -1,0 +1,138 @@
+{
+  "app": {
+    "name": "Bot Console"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "chat": "Chat Bench",
+    "conversations": "Conversations",
+    "prompts": "Prompts",
+    "flows": "Flows",
+    "analytics": "Analytics",
+    "logs": "Logs",
+    "webhooks": "Webhooks",
+    "connectors": "Connectors",
+    "experiments": "Experiments",
+    "settings": "Settings"
+  },
+  "actions": {
+    "switchLocale": "Switch language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "layout": {
+    "loading": "Loading",
+    "empty": "No data to display",
+    "health": "System Health"
+  },
+  "chat": {
+    "pageDescription": "Test live conversations with the bot and monitor streaming tokens in real time.",
+    "header": {
+      "description": "Messages update automatically as streaming events arrive from the mediator.",
+      "pending": "{{count}} stream(s) in progress"
+    },
+    "roles": {
+      "user": "User",
+      "bot": "Bot",
+      "tool": "Tool",
+      "system": "System"
+    },
+    "status": {
+      "pending": "Pending",
+      "streaming": "Streaming",
+      "success": "Completed",
+      "error": "Error",
+      "cancelled": "Cancelled"
+    },
+    "metrics": {
+      "tokens": "Tokens",
+      "latency": "Latency",
+      "latencyUnknown": "Unknown latency",
+      "cost": "Cost"
+    },
+    "meta": {
+      "channel": "Channel",
+      "userId": "User",
+      "requestId": "Request ID"
+    },
+    "actions": {
+      "cancel": "Cancel request"
+    },
+    "developer": {
+      "title": "Developer view",
+      "raw": "Raw payload",
+      "events": "Streaming events"
+    },
+    "composer": {
+      "channel": "Channel",
+      "userId": "User (optional)",
+      "userIdPlaceholder": "e.g. user-123",
+      "message": "Message",
+      "messagePlaceholder": "Type the message you want to send to the mediator...",
+      "variables": "Variables (JSON)",
+      "variablesHint": "Provide a JSON object to inject variables into the template.",
+      "attachments": "Attachments",
+      "addAttachment": "Add attachment",
+      "removeAttachment": "Remove",
+      "noAttachments": "No attachments yet.",
+      "trace": "Enable detailed trace",
+      "send": "Send",
+      "optional": "Optional",
+      "attachmentNamePlaceholder": "Attachment name"
+    },
+    "empty": {
+      "title": "No conversations yet",
+      "description": "Send a new message to start streaming responses."
+    },
+    "errors": {
+      "invalidVariablesTitle": "Invalid JSON payload",
+      "invalidVariablesDescription": "Please ensure the variables field contains valid JSON.",
+      "sendFailedTitle": "Failed to send message",
+      "sendFailedDescription": "Check the connection and try again."
+    },
+    "placeholders": {
+      "waiting": "Waiting for streaming events..."
+    }
+  },
+  "dashboard": {
+    "health": {
+      "title": "Mediator Health",
+      "description": "Periodically checks the BotMediator status with automatic backoff retries.",
+      "refresh": "Refresh now",
+      "refreshing": "Refreshing...",
+      "statusLabel": "Current status",
+      "latencyLabel": "Average latency",
+      "versionLabel": "Version",
+      "versionUnknown": "Not reported",
+      "latencyUnknown": "Not available",
+      "loading": "Loading...",
+      "lastUpdated": "Last updated: {{time}}",
+      "rawToggle": "View raw payload",
+      "error": "An error occurred: {{error}}",
+      "statuses": {
+        "ok": "Healthy",
+        "degraded": "Degraded",
+        "down": "Down",
+        "unknown": "Unknown"
+      },
+      "telegram": {
+        "title": "Telegram",
+        "webhook": "Webhook URL",
+        "pending": "Pending updates",
+        "lastError": "Last error",
+        "none": "No errors recorded",
+        "notConfigured": "Not configured yet"
+      }
+    }
+  },
+  "settings": {
+    "notifications": {
+      "title": "Notification Settings",
+      "help": "Telegram diagnostics and one-click test messages.",
+      "notConfigured": "Not configured",
+      "noErrors": "None"
+    }
+  }
+}
