@@ -4,12 +4,12 @@ import { formatCurrency, formatPercent } from './utils'
 const TELEGRAM_API = 'https://api.telegram.org/bot'
 
 const BOTS = {
-  REPORTS: import.meta.env.VITE_TELEGRAM_BOT_REPORTS_TOKEN || '8382222457:AAGN8IEwtE_l_FPfhAJ4S7yq2NH2lkvV_qw',
-  STATUS: import.meta.env.VITE_TELEGRAM_BOT_STATUS_TOKEN || '8435452935:AAHbJw0j0hh23bSedQkVB9eEGqgzEPXhooM',
-  TRADES: import.meta.env.VITE_TELEGRAM_BOT_TRADES_TOKEN || '8519827284:AAG9o0DvzFRJ7mQFxLGBf5DhWLTIQOH3lIk',
+  REPORTS: import.meta.env.VITE_TELEGRAM_BOT_REPORTS_TOKEN || 'your_telegram_reports_bot_token',
+  STATUS: import.meta.env.VITE_TELEGRAM_BOT_STATUS_TOKEN || 'your_telegram_status_bot_token',
+  TRADES: import.meta.env.VITE_TELEGRAM_BOT_TRADES_TOKEN || 'your_telegram_trades_bot_token',
 }
 
-const CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || '6980352639'
+const CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || 'your_telegram_chat_id'
 
 async function sendMessage(botToken: string, chatId: string, text: string): Promise<boolean> {
   try {
