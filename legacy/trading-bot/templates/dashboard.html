@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section>
+  <h2>نظرة سريعة</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">
+    <!-- بطاقة المحفظة المرتبة -->
+    <div class="card" id="card-equity">
+      <h3 style="margin:0 0 10px 0;">حالة المحفظة</h3>
+      <div class="kv" id="kv-equity">
+        <!-- يُملأ بالـ JS -->
+      </div>
+    </div>
+
+    <!-- قائمة أسعار مباشرة -->
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;">قائمة الأسعار المباشرة</h3>
+      <form onsubmit="return addSymbol(event)" style="display:flex;gap:6px;margin-bottom:8px;">
+        <input id="symAdd" placeholder="أضف رمز (AAPL)" style="flex:1;padding:8px;">
+        <button type="submit">إضافة</button>
+      </form>
+      <div id="watchlist" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;"></div>
+      <ul class="list" id="live-list"><li>جارِ التحميل…</li></ul>
+    </div>
+  </div>
+</section>
+
+<section style="margin-top:16px;">
+  <h2>تنفيذ يدوي</h2>
+  <form action="/manual" method="post" class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;align-items:end;">
+    <div><label>الرمز</label><input name="symbol" id="sym" required placeholder="AAPL" style="width:100%;padding:8px;"></div>
+    <div><label>الاتجاه</label>
+      <select name="side" id="side" style="width:100%;padding:8px;">
+        <option value="buy">Buy</option><option value="sell">Sell</option>
+      </select>
+    </div>
+    <div><label>عدد الأسهم</label><input name="qty_shares" id="qty" type="number" min="1" value="1" style="width:100%;padding:8px;"></div>
+    <div><label>ملاحظة</label><input name="note" placeholder="اختياري" style="width:100%;padding:8px;"></div>
+    <div><button type="submit" style="padding:10px 12px;border-radius:8px;border:1px solid #1f2937;">تنفيذ</button></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button type="button" onclick="preset('AAPL')">AAPL</button>
+      <button type="button" onclick="preset('TSLA')">TSLA</button>
+      <button type="button" onclick="preset('MSFT')">MSFT</button>
+      <button type="button" onclick="preset('NVDA')">NVDA</button>
+    </div>
+    <div><button type="button" onclick="liqAll()" style="padding:10px 12px;border-radius:8px;border:1px solid #1f2937;">بيع كل المراكز</button></div>
+    <div><button type="button" onclick="toggleKillUi()" style="padding:10px 12px;border-radius:8px;border:1px solid #1f2937;">تبديل Kill Switch</button> <span id="kill-status" style="margin-inline-start:6px;color:#94a3b8;">…</span></div>
+  </form>
+</section>
+
+<section style="margin-top:16px;">
+  <h2>المراكز المفتوحة</h2>
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>الرمز</th><th>الكمية</th><th>متوسط التكلفة</th><th>السعر الحالي</th><th>PnL</th><th>نسبة</th></tr></thead>
+    <tbody id="pos-body"></tbody>
+  </table>
+</section>
+
+<section style="margin-top:16px;">
+  <h2>آخر الصفقات</h2>
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>الوقت</th><th>الرمز</th><th>النوع</th><th>الكمية</th><th>السعر</th><th>ملاحظة</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</section>
+
+<script>
+let refreshTimer;
+
+function preset(sym){ document.getElementById('sym').value = sym; }
+
+async function liqAll(){
+  try{
+    await fetch('/liquidate-all', {method:'POST'});
+  } finally {
+    loadAll();
+  }
+}
+
+async function toggleKillUi(){
+  try{
+    await fetch('/kill/toggle', {method:'POST'});
+  } finally {
+    await loadKillStatus();
+    loadAll();
+  }
+}
+
+async function loadKillStatus(){
+  const el = document.getElementById('kill-status');
+  try{
+    const res = await fetch('/kill');
+    const data = await res.json();
+    const on = !!data.kill_on;
+    el.textContent = on ? 'ON' : 'OFF';
+    el.style.color = on ? '#f87171' : '#22c55e';
+  }catch(err){
+    console.error('kill status', err);
+    el.textContent = '؟';
+    el.style.color = '#facc15';
+  }
+}
+
+async function addSymbol(e){
+  e.preventDefault();
+  const s = document.getElementById('symAdd').value.trim().toUpperCase();
+  if(!s) return false;
+  await fetch('/api/watchlist/add', {method:'POST', body: new URLSearchParams({symbol:s})});
+  document.getElementById('symAdd').value='';
+  await loadWatchlist();
+  await loadLiveList();
+  return false;
+}
+
+async function removeSymbol(sym){
+  await fetch('/api/watchlist/remove', {method:'POST', body: new URLSearchParams({symbol:sym})});
+  await loadWatchlist();
+  await loadLiveList();
+}
+
+async function loadPortfolio(){
+  const kv = document.getElementById('kv-equity');
+  try{
+    const res = await fetch('/api/portfolio');
+    const j = await res.json();
+    kv.innerHTML = `
+      <div><b>رأس المال</b></div><div>${Number(j.base_capital).toFixed(2)}</div>
+      <div><b>النقد</b></div><div>${Number(j.cash).toFixed(2)}</div>
+      <div><b>قيمة المراكز</b></div><div>${Number(j.market_value).toFixed(2)}</div>
+      <div><b>إجمالي (Equity)</b></div><div><b>${Number(j.equity).toFixed(2)}</b></div>
+      <div><b>PnL</b></div><div><span class="badge ${j.pnl>=0?'up':'down'}">${Number(j.pnl).toFixed(2)} (${Number(j.pnl_pct).toFixed(2)}%)</span></div>
+    `;
+  }catch(err){
+    console.error('portfolio', err);
+    kv.innerHTML = `<div>تعذّر تحميل البيانات</div>`;
+  }
+}
+
+async function loadPositions(){
+  const body = document.getElementById('pos-body');
+  body.innerHTML = '';
+  try{
+    const res = await fetch('/api/open-positions');
+    const j = await res.json();
+    const rows = Array.isArray(j.positions) ? j.positions : [];
+    if(!rows.length){
+      body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#94a3b8;">لا توجد مراكز مفتوحة</td></tr>`;
+      return;
+    }
+    rows.forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML = `<td>${p.symbol}</td><td>${p.qty}</td><td>${p.avg_cost}</td><td>${p.last}</td>
+                      <td style="color:${p.pnl>=0?'#22c55e':'#f87171'};">${p.pnl}</td><td>${p.pnl_pct}%</td>`;
+      body.appendChild(tr);
+    });
+  }catch(err){
+    console.error('positions', err);
+    body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#f87171;">خطأ في تحميل المراكز</td></tr>`;
+  }
+}
+
+async function loadTrades(){
+  const tb = document.getElementById('tbody');
+  tb.innerHTML='';
+  try{
+    const res = await fetch('/api/trades');
+    const j = await res.json();
+    const rows = Array.isArray(j.trades) ? j.trades : [];
+    if(!rows.length){
+      tb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#94a3b8;">لا توجد صفقات بعد</td></tr>`;
+      return;
+    }
+    rows.forEach(t=>{
+      const tr=document.createElement('tr');
+      const sideClass = (t.side||'').toLowerCase() === 'buy' ? 'badge up' : 'badge down';
+      tr.innerHTML = `
+        <td>${t.ts||'-'}</td>
+        <td>${t.symbol||'-'}</td>
+        <td><span class="${sideClass}">${(t.side||'-').toUpperCase()}</span></td>
+        <td>${t.qty||0}</td>
+        <td>${Number(t.price||0).toFixed(2)}</td>
+        <td>${t.note ? t.note : '-'}</td>`;
+      tb.appendChild(tr);
+    });
+  }catch(err){
+    console.error('trades', err);
+    tb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#f87171;">تعذّر تحميل سجل الصفقات</td></tr>`;
+  }
+}
+
+async function loadWatchlist(){
+  const box = document.getElementById('watchlist');
+  box.innerHTML='';
+  try{
+    const res = await fetch('/api/watchlist');
+    const j = await res.json();
+    const wl = Array.isArray(j.watchlist) ? j.watchlist : [];
+    if(!wl.length){
+      box.innerHTML = `<span class="badge">قائمة فارغة</span>`;
+      return;
+    }
+    wl.forEach(s=>{
+      const chip = document.createElement('div');
+      chip.className='badge';
+      chip.innerHTML = `${s} <a href="#" onclick="removeSymbol('${s}');return false;">×</a>`;
+      box.appendChild(chip);
+    });
+  }catch(err){
+    console.error('watchlist', err);
+    box.innerHTML = `<span class="badge down">خطأ بالتحميل</span>`;
+  }
+}
+
+async function loadLiveList(){
+  const list = document.getElementById('live-list');
+  list.innerHTML='';
+  try{
+    const res = await fetch('/api/quotes/list');
+    const j = await res.json();
+    const quotes = Array.isArray(j.quotes) ? j.quotes : [];
+    if(!quotes.length){
+      list.innerHTML = `<li style="color:#94a3b8;">لا توجد بيانات أسعار</li>`;
+      return;
+    }
+    quotes.forEach(q=>{
+      const li = document.createElement('li');
+      const pctClass = Number(q.change_pct) >= 0 ? 'up' : 'down';
+      li.innerHTML = `
+        <div style="min-width:160px;"><b>${q.name}</b> <small style="color:#94a3b8;">(${q.symbol})</small></div>
+        <div>${Number(q.last).toFixed(2)}</div>
+        <div><span class="badge ${pctClass}">${Number(q.change_pct).toFixed(2)}%</span></div>
+      `;
+      list.appendChild(li);
+    });
+  }catch(err){
+    console.error('quotes', err);
+    list.innerHTML = `<li style="color:#f87171;">خطأ في جلب الأسعار</li>`;
+  }
+}
+
+async function loadAll(){
+  if(refreshTimer) clearTimeout(refreshTimer);
+  try{
+    await loadPortfolio();
+    await loadPositions();
+    await loadTrades();
+    await loadWatchlist();
+    await loadLiveList();
+    await loadKillStatus();
+  } finally {
+    refreshTimer = setTimeout(loadAll, 5000);
+  }
+}
+
+loadAll();
+</script>
+{% endblock %}

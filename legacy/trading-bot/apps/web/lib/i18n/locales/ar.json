@@ -1,0 +1,138 @@
+{
+  "app": {
+    "name": "لوحة تحكم البوت"
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "chat": "المختبر",
+    "conversations": "المحادثات",
+    "prompts": "القوالب",
+    "flows": "التدفقات",
+    "analytics": "التحليلات",
+    "logs": "السجلات",
+    "webhooks": "الويب هوكس",
+    "connectors": "التكاملات",
+    "experiments": "التجارب",
+    "settings": "الإعدادات"
+  },
+  "actions": {
+    "switchLocale": "تغيير اللغة",
+    "theme": "السمة",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "layout": {
+    "loading": "جاري التحميل",
+    "empty": "لا توجد بيانات لعرضها",
+    "health": "حالة النظام"
+  },
+  "chat": {
+    "pageDescription": "اختبر تدفق الرسائل مع البوت وتابع بث التوكنات والآثار الجانبية في الزمن الحقيقي.",
+    "header": {
+      "description": "يتم تحديث الرسائل تلقائياً مع كل حدث يصل من الوسيط.",
+      "pending": "{{count}} تدفق قيد المعالجة"
+    },
+    "roles": {
+      "user": "مستخدم",
+      "bot": "البوت",
+      "tool": "أداة",
+      "system": "نظام"
+    },
+    "status": {
+      "pending": "بانتظار",
+      "streaming": "جاري الإرسال",
+      "success": "اكتمل",
+      "error": "خطأ",
+      "cancelled": "أُلغي"
+    },
+    "metrics": {
+      "tokens": "التوكنات",
+      "latency": "الزمن",
+      "latencyUnknown": "غير متاح",
+      "cost": "الكلفة"
+    },
+    "meta": {
+      "channel": "القناة",
+      "userId": "المستخدم",
+      "requestId": "معرّف الطلب"
+    },
+    "actions": {
+      "cancel": "إلغاء الطلب"
+    },
+    "developer": {
+      "title": "منظور المطوّر",
+      "raw": "الناتج الخام",
+      "events": "أحداث البث"
+    },
+    "composer": {
+      "channel": "القناة",
+      "userId": "المستخدم (اختياري)",
+      "userIdPlaceholder": "مثال: user-123",
+      "message": "نص الرسالة",
+      "messagePlaceholder": "اكتب الرسالة التي تريد إرسالها للوسيط...",
+      "variables": "المتغيرات (JSON)",
+      "variablesHint": "أدخل كائناً بصيغة JSON لتمرير متغيرات إضافية إلى القالب.",
+      "attachments": "المرفقات",
+      "addAttachment": "إضافة مرفق",
+      "removeAttachment": "إزالة",
+      "noAttachments": "لا توجد مرفقات حالياً.",
+      "trace": "تفعيل التتبّع التفصيلي",
+      "send": "إرسال",
+      "optional": "اختياري",
+      "attachmentNamePlaceholder": "وصف المرفق"
+    },
+    "empty": {
+      "title": "لا توجد محادثات بعد",
+      "description": "ابدأ محادثة جديدة من خلال المحرر لتظهر النتائج هنا."
+    },
+    "errors": {
+      "invalidVariablesTitle": "صيغة JSON غير صالحة",
+      "invalidVariablesDescription": "تأكد من أن المتغيرات مكتوبة بصيغة JSON صحيحة.",
+      "sendFailedTitle": "فشل إرسال الرسالة",
+      "sendFailedDescription": "تحقق من الاتصال أو أعد المحاولة لاحقاً."
+    },
+    "placeholders": {
+      "waiting": "بانتظار استكمال البث..."
+    }
+  },
+  "dashboard": {
+    "health": {
+      "title": "حالة الوسيط",
+      "description": "يتم فحص حالة BotMediator بشكل دوري مع إعادة المحاولة التلقائية.",
+      "refresh": "تحديث الآن",
+      "refreshing": "جاري التحديث...",
+      "statusLabel": "الحالة الحالية",
+      "latencyLabel": "متوسط زمن الاستجابة",
+      "versionLabel": "الإصدار",
+      "versionUnknown": "غير محدد",
+      "latencyUnknown": "غير متاح",
+      "loading": "جاري التحميل...",
+      "lastUpdated": "آخر تحديث: {{time}}",
+      "rawToggle": "المزيد من التفاصيل",
+      "error": "حدث خطأ: {{error}}",
+      "statuses": {
+        "ok": "مستقر",
+        "degraded": "متذبذب",
+        "down": "متوقف",
+        "unknown": "غير معروف"
+      },
+      "telegram": {
+        "title": "برقية",
+        "webhook": "عنوان الويب هوك",
+        "pending": "تحديثات معلّقة",
+        "lastError": "آخر خطأ",
+        "none": "لا توجد أخطاء مسجلة",
+        "notConfigured": "لم يتم تكوينه بعد"
+      }
+    }
+  },
+  "settings": {
+    "notifications": {
+      "title": "إعدادات الإشعارات",
+      "help": "أدوات التحقق من تكامل تيليجرام والإرسال التجريبي.",
+      "notConfigured": "غير مضبوط",
+      "noErrors": "لا يوجد"
+    }
+  }
+}
